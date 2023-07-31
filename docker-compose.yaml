@@ -1,0 +1,14 @@
+# Nos ayuda a que sea mas facil trabajar para trabajar con los comandos de docker
+# Nos permite agrupar diferentes servicios
+
+# Quiero asignar un espacio en memoria en este punto y lo manejo con los volumes
+# mapeo la carpeta mongo y se agrega a la data/db
+
+services:
+  entriesdb:
+    image: mongo:5.0.0
+    container_name: entries-database
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo:data/db
