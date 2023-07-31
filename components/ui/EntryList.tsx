@@ -1,9 +1,12 @@
-import { FC, useContext, useMemo } from 'react';
+import { FC, DragEvent, useContext, useMemo } from 'react';
 import { Paper, List } from '@mui/material'
 
 import { EntriesContext } from '../../context/entries';
 import { EntryStatus } from '../../interfaces'
 import { EntryCard } from './'
+import { UIContext } from '../../context/ui';
+
+import styles from './EntryList.module.css';
 
 interface Props {
   status: EntryStatus;
@@ -12,15 +15,33 @@ interface Props {
 // Se define que el status siempre sea: pending, in-proress y done
 export const EntryList:FC<Props> = ({ status }) => {
 
-  const { entries } = useContext(EntriesContext) ;
-  // Al menos que los entries cambies, no quiero volver a ejecutar este filtro
-  const entriesByStatus = useMemo(() => entries.filter( entry => entry.status === status ), [ entries, status ])
+  const { entries, updateEntry } = useContext(EntriesContext) ;
+  const { isDragging, endDragging } = useContext(UIContext)
+
+  // useMemo: al menos que los entries cambien, no quiero volver a ejecutar este filtro
+  const entriesByStatus = useMemo(() => entries.filter( entry => entry.status === status ), [ entries, status ]);
+
+  const onDropEntry = ( event: DragEvent<HTMLDivElement> ) => {
+    const id = event.dataTransfer.getData('text'); 
+    const entry = entries.find( e => e._id === id)!;
+    entry.status = status;
+    updateEntry( entry );
+    endDragging();
+  };
+
+  const allowDrop = ( event: DragEvent<HTMLDivElement> ) => {
+    event.preventDefault();
+  };
   
   return (
     // div tag to do drop
-    <div>
+    <div
+      onDrop={ onDropEntry }
+      onDragOver={ allowDrop }
+      className={isDragging ? styles.dragging : ''}
+    >
         <Paper sx={{ height: 'calc( 100vh - 180px )', backgroundColor: 'transparent', padding: '1px 5px' }}>
-            <List sx={{opacity: 1}}>
+            <List sx={{opacity: isDragging ? .3 : 1, transition: 'all .3s'}}>
                 {
                   entriesByStatus.map( entry => (
                    <EntryCard key={entry._id} entry={entry}/>
