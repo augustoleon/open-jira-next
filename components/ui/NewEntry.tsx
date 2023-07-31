@@ -1,16 +1,96 @@
 
+import { ChangeEvent, useState, useContext } from 'react';
 
-import { Button } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
+import SaveOutlinesIcon from '@mui/icons-material/SaveOutlined';
+import AddIcon from '@mui/icons-material/Add';
+
+import { EntriesContext } from '../../context/entries';
+import { UIContext } from '../../context/ui';
 
 export const NewEntry = () => {
+
+  const { addNewEntry } = useContext(EntriesContext); 
+  const { isAddingEntry, setIsAddingEntry} = useContext(UIContext);
+
+  const [inputValue, setInputValue] = useState('');
+  const [touched, setTouched] = useState(false);
+
+  const onTextFieldChanges = ( event: ChangeEvent<HTMLInputElement>) => {
+    setInputValue( event.target.value );
+    setTouched(false);
+  };
+
+  const onSave = () => {
+    if (inputValue.length === 0)  return;
+    addNewEntry(inputValue);
+    setIsAddingEntry(false);
+    setTouched(false);
+    setInputValue('');
+  };
+
+  const addTask = () => {
+    setIsAddingEntry(true); 
+    setTouched(false);
+  };
+
+  const cancelTask = () => {
+    setIsAddingEntry(false);
+    setTouched(false);
+  }
+ 
   return (
-    <>
-        <Button
+    <Box
+      sx={{ marginBottom: 1, padding: 1}}
+    >
+      {
+        isAddingEntry ? (
+          <>
+            <TextField
+              fullWidth
+              sx={{ marginTop: 2, marginBottom: 1}}
+              placeholder='Nueva entrada'
+              autoFocus
+              multiline
+              label='Nueva entrada'
+              helperText={ inputValue.length <= 0 && touched && 'Ingrese un valor'}
+              error={ inputValue.length <= 0 && touched}
+              value={inputValue}
+              onChange={onTextFieldChanges}
+              onBlur={ () => setTouched(true) }
+            />
+            <Box display='flex' justifyContent='space-between'>
+              <Button
+                variant='text'
+                onClick={cancelTask}
+              >
+                    Cancelar
+              </Button>
+              <Button
+                    variant='outlined'
+                    color='secondary'
+                    endIcon={ <SaveOutlinesIcon/> }
+                    onClick={onSave}
+                >
+                    Guardar
+                </Button>
+            </Box>
+          </>
+        ) 
+        : 
+        (
+
+          <Button
+            startIcon={<AddIcon/>}
+            fullWidth
             variant='outlined'
-            color='secondary'
-        >
-            Guardar
-        </Button>
-    </>
+            onClick={ addTask }
+          >
+            Agregar tarea
+          </Button>
+        )
+      }
+      
+    </ Box>
   )
 }
