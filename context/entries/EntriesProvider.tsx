@@ -6,7 +6,7 @@ import { Entry } from '../../interfaces';
 
 export interface EntriesState {
     entries: Entry[];
-}
+};
 
 
 const ENTRIES_INITIAL_STATE: EntriesState = {
@@ -30,7 +30,7 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
             createdAt: Date.now() - 100000,
         }
     ],
-}
+}; 
 
 
 export const EntriesProvider:FC = ({ children }) => {
@@ -43,9 +43,13 @@ export const EntriesProvider:FC = ({ children }) => {
             description,
             createdAt: Date.now(),
             status: 'pending'
-        }
+        };
 
-        dispatch({ type: '[Entry] - Add-Entry', payload: newEntry})
+        dispatch({ type: '[Entry] - Add-Entry', payload: newEntry});
+    };
+
+    const updateEntry = (entry: Entry) => {
+        dispatch({type: '[Entry] - Entry-Updated', payload: entry})
     }
 
     return (
@@ -54,6 +58,7 @@ export const EntriesProvider:FC = ({ children }) => {
 
             //Methods
             addNewEntry,
+            updateEntry,
         }}>
             { children }
         </EntriesContext.Provider>
