@@ -1,8 +1,10 @@
-import { FC, useReducer } from 'react';
+import { FC, useReducer, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import { EntriesContext, entriesReducer } from './';
 import { Entry } from '../../interfaces';
+import axios from 'axios';
+import { entriesApi } from '../../api';
 
 export interface EntriesState {
     entries: Entry[];
@@ -10,31 +12,26 @@ export interface EntriesState {
 
 
 const ENTRIES_INITIAL_STATE: EntriesState = {
-    entries: [
-        {
-            _id: uuidv4(),
-            description: 'Una línea de descripción pendiente',
-            status: 'pending',
-            createdAt: Date.now(),
-        },
-        {
-            _id: uuidv4(),
-            description: 'Una línea de descripción en progreso',
-            status: 'in-progress',
-            createdAt: Date.now() - 1000000,
-        },
-        {
-            _id: uuidv4(),
-            description: 'Una línea de descripción finalizada',
-            status: 'done',
-            createdAt: Date.now() - 100000,
-        }
-    ],
+    entries: [],
 }; 
 
 
 export const EntriesProvider:FC = ({ children }) => {
     const [state, dispatch] = useReducer( entriesReducer, ENTRIES_INITIAL_STATE );
+
+    const refreshEntries = async() => {
+        try {
+            const { data } = await entriesApi.get<Entry[]>('/entries')
+            dispatch({ type: '[Entry] - Refresh-Data', payload: data })
+            
+        } catch (error) {
+            console.log('error catch', error);
+        }
+    };
+    useEffect(() => {
+      refreshEntries();
+    }, [])
+    
 
     const addNewEntry = ( description: string ) => {
         
