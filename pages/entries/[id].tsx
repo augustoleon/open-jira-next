@@ -1,5 +1,5 @@
-import { ChangeEvent, useMemo, useState, FC } from 'react';
-import { GetServerSideProps } from 'next'
+import { ChangeEvent, useMemo, useState, FC, useContext } from 'react';
+import { GetServerSideProps } from 'next';
 
 import { 
     capitalize, Button, Card, CardActions, 
@@ -10,6 +10,7 @@ import {
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
+import { EntriesContext } from '../../context/entries';
 import { dbEntries } from '../../database';
 import { Layout } from '../../components/layouts'
 import { Entry, EntryStatus } from '../../interfaces';
@@ -21,6 +22,8 @@ interface Props{
 }
 
 export const EntryPage:FC<Props> = ({ entry }) => {
+
+    const { updateEntry } = useContext(EntriesContext)
 
     const [inputValue, setInputValue] = useState( entry.description );
     const [status, setStatus] = useState<EntryStatus>( entry.status );
@@ -40,7 +43,15 @@ export const EntryPage:FC<Props> = ({ entry }) => {
     };
 
     const onSave = () => {
-        console.log({ inputValue, status });
+        if(inputValue.trim().length === 0 ) return;
+        
+        const updatedEntry: Entry = {
+            ...entry,
+            status,
+            description: inputValue
+        };
+
+        updateEntry( updatedEntry, true );
         
     };
   return (
