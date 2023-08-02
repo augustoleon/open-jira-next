@@ -16,7 +16,7 @@ const entrySchema = new Schema({
             ],
             message: '{VALUE} no es un estado permitido'
         },
-        required: true
+        default: 'pending', 
     }
 
 });
