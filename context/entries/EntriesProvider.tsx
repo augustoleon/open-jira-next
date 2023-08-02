@@ -1,9 +1,7 @@
 import { FC, useReducer, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 import { EntriesContext, entriesReducer } from './';
 import { Entry } from '../../interfaces';
-import axios from 'axios';
 import { entriesApi } from '../../api';
 
 export interface EntriesState {
@@ -33,20 +31,19 @@ export const EntriesProvider:FC = ({ children }) => {
     }, [])
     
 
-    const addNewEntry = ( description: string ) => {
-        
-        const newEntry: Entry = {
-            _id: uuidv4(),
-            description,
-            createdAt: Date.now(),
-            status: 'pending'
-        };
-
-        dispatch({ type: '[Entry] - Add-Entry', payload: newEntry});
+    const addNewEntry = async ( description: string ) => {
+        const { data } = await entriesApi.post('/entries', { description });
+        dispatch({ type: '[Entry] - Add-Entry', payload: data});
     };
 
-    const updateEntry = (entry: Entry) => {
-        dispatch({type: '[Entry] - Entry-Updated', payload: entry})
+    const updateEntry = async({ _id, description, status}: Entry) => {
+        try {
+            const { data } = await entriesApi.put(`/entries/${ _id}`, { description, status });
+            dispatch({type: '[Entry] - Entry-Updated', payload: data})
+            
+        } catch (error) {
+            console.log({ error });
+        }
     }
 
     return (
