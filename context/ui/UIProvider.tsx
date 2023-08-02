@@ -1,6 +1,9 @@
 import { FC, useReducer } from 'react';
 import { UIContext, uiReducer } from './';
 
+interface Props {
+    children: React.ReactNode;
+}
 export interface UIState {
     sidemenuOpen: boolean;
     isAddingEntry: boolean;
@@ -15,7 +18,7 @@ const UI_INITIAL_STATE: UIState = {
 }
 
 // Quien provee nuestra información
-export const UIProvider:FC = ({ children }) => {
+export const UIProvider:FC<Props> = ({ children }) => {
 
     const [state, dispatch] = useReducer( uiReducer, UI_INITIAL_STATE );
 
