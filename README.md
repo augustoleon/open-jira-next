@@ -15,7 +15,7 @@ Renombrar el archivo __.env.template__ a __.env__
 
 ## LLenar la base de datos con información de pruebas
 
-Llamara:
+Llamar a:
 ``` http://localhost:3000/api/seed ``` 
 
 ## Getting Started
