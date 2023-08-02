@@ -4,6 +4,9 @@ import { EntriesContext, entriesReducer } from './';
 import { Entry } from '../../interfaces';
 import { entriesApi } from '../../api';
 
+interface Props {
+    children: React.ReactNode;
+}
 export interface EntriesState {
     entries: Entry[];
 };
@@ -14,7 +17,7 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
 }; 
 
 
-export const EntriesProvider:FC = ({ children }) => {
+export const EntriesProvider:FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer( entriesReducer, ENTRIES_INITIAL_STATE );
 
     const refreshEntries = async() => {
