@@ -1,4 +1,5 @@
 import { FC, useReducer, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
 
 import { EntriesContext, entriesReducer } from './';
@@ -19,6 +20,8 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
 
 
 export const EntriesProvider:FC<Props> = ({ children }) => {
+    const router = useRouter();
+
     const [state, dispatch] = useReducer( entriesReducer, ENTRIES_INITIAL_STATE );
 
     const refreshEntries = async() => {
@@ -61,13 +64,34 @@ export const EntriesProvider:FC<Props> = ({ children }) => {
         }
     }
 
+    const deleteEntry = async( id:string ) => {
+        try{
+            await entriesApi.delete(`/entries/${id}`);
+            refreshEntries();
+            enqueueSnackbar('Eliminado correctamente', {
+                variant: 'success',
+                autoHideDuration: 1500,
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'right',
+                }
+            });
+            router.replace('/')
+        } catch (err) {
+            console.log({err});
+        }
+        
+    };
+
     return (
         <EntriesContext.Provider value={{
             ...state,
 
             //Methods
+            refreshEntries,
             addNewEntry,
             updateEntry,
+            deleteEntry,
         }}>
             { children }
         </EntriesContext.Provider>
