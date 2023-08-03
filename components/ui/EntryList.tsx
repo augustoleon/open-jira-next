@@ -1,10 +1,10 @@
 import { FC, DragEvent, useContext, useMemo } from 'react';
-import { Paper, List } from '@mui/material'
+import { Paper, List } from '@mui/material';
 
 import { UIContext } from '../../context/ui';
 import { EntriesContext } from '../../context/entries';
-import { EntryStatus } from '../../interfaces'
-import { EntryCard } from './'
+import { EntryStatus } from '../../interfaces';
+import { EntryCard } from './';
 
 import styles from './EntryList.module.css';
 
@@ -15,8 +15,9 @@ interface Props {
 // Se define que el status siempre sea: pending, in-proress y done
 export const EntryList:FC<Props> = ({ status }) => {
 
-  const { entries, updateEntry } = useContext(EntriesContext) ;
-  const { isDragging, endDragging } = useContext(UIContext)
+  const { entries, updateEntry } = useContext(EntriesContext);
+  const { isDragging, endDragging } = useContext(UIContext);
+  
 
   // useMemo: al menos que los entries cambien, no quiero volver a ejecutar este filtro
   const entriesByStatus = useMemo(() => entries.filter( entry => entry.status === status ), [ entries, status ]);
